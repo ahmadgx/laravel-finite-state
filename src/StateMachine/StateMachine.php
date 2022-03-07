@@ -31,7 +31,7 @@ class StateMachine implements StateMachineInterface
     /**
      * {@inheritDoc}
      */
-    public function can($transition): bool
+    public function can($transition,$property_name = NULL): bool
     {
         if (! isset($this->config['transitions'][$transition])) {
             throw new StateMachineException(sprintf(
@@ -41,9 +41,20 @@ class StateMachine implements StateMachineInterface
             ));
         }
 
-        if (! in_array($this->getState(), $this->config['transitions'][$transition]['from'])) {
-            return false;
+
+        if(!is_null($property_name)){
+            if (!isset($this->config['state_property_name'][$property_name])) {
+                throw new StateMachineException('State not set for ' . get_class($this->object));
+            }
+            if (! in_array($this->getState($this->config['state_property_name'][$property_name]), $this->config['transitions'][$transition]['from'])) {
+                return false;
+            }
+        }else {
+            if (! in_array($this->getState(), $this->config['transitions'][$transition]['from'])) {
+                return false;
+            }
         }
+
 
         return true;
     }
@@ -52,13 +63,13 @@ class StateMachine implements StateMachineInterface
     /**
      * {@inheritDoc}
      */
-    public function apply($transition): void
+    public function apply($transition,$property_name = NULL): void
     {
         if (! $this->can($transition)) {
             throw new StateMachineException(sprintf(
                 'Transition "%s" cannot be applied on state "%s" of object "%s"',
                 $transition,
-                $this->getState(),
+                $this->getState($property_name),
                 get_class($this->object)
             ));
         }
@@ -73,7 +84,7 @@ class StateMachine implements StateMachineInterface
             }
         }
 
-        $this->setState($stateTo);
+        $this->setState($stateTo,$property_name);
 
         event(new StateChanged($this->object, $transition, $stateTo));
 
@@ -86,9 +97,17 @@ class StateMachine implements StateMachineInterface
     /**
      * {@inheritDoc}
      */
-    public function getState(): string
+    public function getState($property_name = NULL): string
     {
-        $property = $this->config['state_property_name'];
+        if(!is_null($property_name)){
+            if (!isset($this->config['state_property_name'][$property_name])) {
+                throw new StateMachineException('State not set for ' . get_class($this->object));
+            }
+            $property = $this->config['state_property_name'][$property_name];
+        }else {
+            $property = $this->config['state_property_name'];
+        }
+
         $value = $this->object->$property;
 
         if (! is_string($value)) {
@@ -116,7 +135,7 @@ class StateMachine implements StateMachineInterface
      *
      * @throws StateMachineException
      */
-    protected function setState($state): void
+    protected function setState($state,$property_name = NULL): void
     {
         if (! in_array($state, $this->config['states'])) {
             throw new StateMachineException(sprintf(
@@ -126,7 +145,14 @@ class StateMachine implements StateMachineInterface
             ));
         }
 
-        $property = $this->config['state_property_name'];
+        if(!is_null($property_name)){
+            if (!isset($this->config['state_property_name'][$property_name])) {
+                throw new StateMachineException('State not set for ' . get_class($this->object));
+            }
+            $property = $this->config['state_property_name'][$property_name];
+        }else {
+            $property = $this->config['state_property_name'];
+        }
 
         $this->object->$property = $state;
 
