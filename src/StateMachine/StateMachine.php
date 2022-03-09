@@ -110,7 +110,7 @@ class StateMachine implements StateMachineInterface
 
         $value = $this->object->$property;
 
-        if (! is_string($value)) {
+        if (empty($value)) {
             throw new StateMachineException('State not set for ' . get_class($this->object));
         }
 
