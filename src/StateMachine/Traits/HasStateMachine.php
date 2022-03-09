@@ -30,7 +30,7 @@ trait HasStateMachine
      * @return bool
      * @throws \StateMachine\Exceptions\StateMachineException
      */
-    public function transitionAllowed(string $transition,$property_name = NULL): bool
+    public function transitionAllowed($transition,$property_name = NULL): bool
     {
         return $this->stateMachine()->can($transition,$property_name);
     }
@@ -40,7 +40,7 @@ trait HasStateMachine
      * @return void
      * @throws \StateMachine\Exceptions\StateMachineException
      */
-    public function transition(string $transition,$property_name = NULL): void
+    public function transition($transition,$property_name = NULL): void
     {
         $this->stateMachine()->apply($transition,$property_name);
     }

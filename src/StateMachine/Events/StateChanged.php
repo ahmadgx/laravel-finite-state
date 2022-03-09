@@ -21,7 +21,7 @@ class StateChanged
      * @param $transition
      * @param $stateTo
      */
-    public function __construct($object, string $transition, string $stateTo)
+    public function __construct($object, $transition, $stateTo)
     {
         $this->object = $object;
         $this->transition = $transition;

@@ -17,11 +17,11 @@ trait HasStateHistory
     }
 
     /**
-     * @param string $transition
+     * @param $transition
      * @param string $to
      * @return void
      */
-    public function afterStateChange(string $transition, string $to)
+    public function afterStateChange($transition, string $to)
     {
         $this->addHistoryLine([
             "transition" => $transition,
@@ -44,7 +44,7 @@ trait HasStateHistory
      * @param string $stateTo
      * @return \Illuminate\Support\Collection
      */
-    public function findHistoricalStatesByTo(string $stateTo)
+    public function findHistoricalStatesByTo($stateTo)
     {
         return $this->transitionHistory->where('to', $stateTo);
     }
@@ -53,7 +53,7 @@ trait HasStateHistory
      * @param string $transition
      * @return \Illuminate\Support\Collection
      */
-    public function findHistoricalStatesByTransition(string $transition)
+    public function findHistoricalStatesByTransition($transition)
     {
         return $this->transitionHistory->where('transition', $transition);
     }
@@ -62,7 +62,7 @@ trait HasStateHistory
      * @param string $stateTo
      * @return bool
      */
-    public function hasStateInHistory(string $stateTo): bool
+    public function hasStateInHistory($stateTo): bool
     {
         return $this->findHistoricalStatesByTo($stateTo)->isNotEmpty();
     }
@@ -71,7 +71,7 @@ trait HasStateHistory
      * @param string $transition
      * @return bool
      */
-    public function hasTransitionInHistory(string $transition): bool
+    public function hasTransitionInHistory($transition): bool
     {
         return $this->findHistoricalStatesByTransition($transition)->isNotEmpty();
     }
