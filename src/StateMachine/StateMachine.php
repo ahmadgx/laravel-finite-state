@@ -33,6 +33,7 @@ class StateMachine implements StateMachineInterface
      */
     public function can($transition,$property_name = NULL): bool
     {
+
         if (! isset($this->config['transitions'][$transition])) {
             throw new StateMachineException(sprintf(
                 'Transition "%s" does not exist on object "%s"',
@@ -41,12 +42,11 @@ class StateMachine implements StateMachineInterface
             ));
         }
 
-
         if(!is_null($property_name)){
-            if (!isset($this->config['state_property_name'][$property_name])) {
+            if (!in_array($property_name,$this->config['state_property_name'])) {
                 throw new StateMachineException('State not set for ' . get_class($this->object));
             }
-            if (! in_array($this->getState($this->config['state_property_name'][$property_name]), $this->config['transitions'][$transition]['from'])) {
+            if (! in_array($this->getState($property_name), $this->config['transitions'][$transition]['from'])) {
                 return false;
             }
         }else {
@@ -100,10 +100,10 @@ class StateMachine implements StateMachineInterface
     public function getState($property_name = NULL): string
     {
         if(!is_null($property_name)){
-            if (!isset($this->config['state_property_name'][$property_name])) {
+            if (!in_array($property_name,$this->config['state_property_name'])) {
                 throw new StateMachineException('State not set for ' . get_class($this->object));
             }
-            $property = $this->config['state_property_name'][$property_name];
+            $property = $property_name;
         }else {
             $property = $this->config['state_property_name'];
         }
@@ -146,10 +146,10 @@ class StateMachine implements StateMachineInterface
         }
 
         if(!is_null($property_name)){
-            if (!isset($this->config['state_property_name'][$property_name])) {
+            if (!in_array($property_name,$this->config['state_property_name'])) {
                 throw new StateMachineException('State not set for ' . get_class($this->object));
             }
-            $property = $this->config['state_property_name'][$property_name];
+            $property = $property_name ;
         }else {
             $property = $this->config['state_property_name'];
         }
